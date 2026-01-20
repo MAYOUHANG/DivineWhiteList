@@ -23,6 +23,7 @@ public class DivineWhiteListPlugin extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable() {
+        logStartupBanner();
         saveDefaultConfig();
         reloadPluginConfig();
         File dataFile = new File(getDataFolder(), "data.yml");
@@ -38,7 +39,6 @@ public class DivineWhiteListPlugin extends JavaPlugin implements Listener {
             getCommand("dwl").setExecutor(command);
             getCommand("dwl").setTabCompleter(command);
         }
-        getLogger().info("DivineWhiteList enabled.");
     }
 
     @Override
@@ -66,6 +66,15 @@ public class DivineWhiteListPlugin extends JavaPlugin implements Listener {
 
     public AuditLogger getAuditLogger() {
         return auditLogger;
+    }
+
+    private void logStartupBanner() {
+        getLogger().info("╔════════════════════════════════════════════╗");
+        getLogger().info("║     ✦ DivineWhiteList Core Ignition ✦      ║");
+        getLogger().info("║   ⚡ Energizing whitelist matrix...         ║");
+        getLogger().info("║   ✧ Author: MAAAABG                         ║");
+        getLogger().info("║   ☄️  Syncing realm access protocols...      ║");
+        getLogger().info("╚════════════════════════════════════════════╝");
     }
 
     @EventHandler

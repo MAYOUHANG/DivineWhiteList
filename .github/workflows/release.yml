@@ -1,0 +1,45 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Release tag (e.g. v1.1)"
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Build
+        run: mvn -B package
+
+      - name: Prepare artifact name
+        id: artifact
+        shell: bash
+        run: |
+          version="${{ inputs.version }}"
+          version_no_v="${version#v}"
+          jar_path="$(ls target/*.jar | head -n 1)"
+          output_name="DivineWhiteList-${version_no_v}.jar"
+          cp "${jar_path}" "${output_name}"
+          echo "file=${output_name}" >> "$GITHUB_OUTPUT"
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ inputs.version }}
+          name: ${{ inputs.version }}
+          files: ${{ steps.artifact.outputs.file }}
