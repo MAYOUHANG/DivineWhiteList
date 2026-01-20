@@ -43,6 +43,10 @@ DivineWhiteList 是一个面向 Mohist 1.20.1 混合端与 Spigot 体系的白�
 3) 执行 /dwl reload 载入配置  
 4) 使用命令添加白名单
 
+编译方式  
+1) 在仓库根目录执行 mvn package  
+2) 生成的 jar 位于 target/DivineWhiteList-1.0.0.jar  
+
 目录结构  
 - plugins/DivineWhiteList/config.yml  
 - plugins/DivineWhiteList/data.yml  
@@ -59,17 +63,18 @@ DivineWhiteList 是一个面向 Mohist 1.20.1 混合端与 Spigot 体系的白�
 主命令：/dwl
 
 5.1 添加白名单  
-/dwl add <玩家名> <QQ号> [备注...]
+/dwl add <玩家名> <QQ号> [备注...] [--force]
 
 示例  
 /dwl add Mayoh 12345678 朋友推荐  
-/dwl add Alice 987654321
+/dwl add Alice 987654321  
+/dwl add Alice 987654321 已经存在 --force
 
 规则建议  
 - 玩家名默认不区分大小写  
 - QQ 号要求为纯数字，长度默认 5 到 12 位，可配置  
 - 若 QQ 已绑定其他玩家名，默认拒绝添加  
-- 若玩家名已存在，默认提示已存在，建议支持 --force 覆盖
+- 若玩家名已存在，默认提示已存在，支持 --force 覆盖
 
 5.2 移除白名单  
 /dwl remove <玩家名>
@@ -104,6 +109,12 @@ DivineWhiteList 是一个面向 Mohist 1.20.1 混合端与 Spigot 体系的白�
 5.8 导入导出 可选  
 /dwl export vanilla  
 /dwl import vanilla
+
+导入说明  
+- import 会将原版白名单中的玩家名写入 data.yml  
+- QQ 会自动生成纯数字占位号，长度可在 config.yml 的 import.qq-length 设置  
+- 备注使用 import.placeholder-note  
+- 如 QQ 名额已满会跳过该玩家
 
 ## 6. 权限节点
 
@@ -157,6 +168,10 @@ logging:
 notes:
   max-length: 64
 
+import:
+  placeholder-note: "imported from vanilla whitelist"
+  qq-length: 10
+
 ## 8. 数据文件格式
 
 plugins/DivineWhiteList/data.yml 建议结构
@@ -203,6 +218,11 @@ offline-mode 下玩家名等同身份标识的一部分，建议入服审核流�
 - 审计日志  
 - 可选同步到原版 whitelist.json  
 - import export
+
+当前实现补充  
+- /dwl add 支持 --force 覆盖  
+- /dwl list 默认每页 10 条  
+- data.yml 使用临时文件保存后替换，降低损坏风险  
 
 ## 12. 许可协议建议
 

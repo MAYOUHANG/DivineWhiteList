@@ -1,0 +1,36 @@
+enabled: true
+
+case-insensitive-names: true
+
+qq:
+  min-length: 5
+  max-length: 12
+  regex: "^[0-9]+$"
+
+limits:
+  max-names-per-qq: 1
+
+kick-message:
+  - "&c你不在白名单中。"
+  - "&7请按管理组要求提交申请。"
+  - "&7你的用户名: &f{player}"
+  - "&7服务器: &f{server}"
+
+placeholders:
+  server: "PaPa服务器"
+
+sync-vanilla-whitelist:
+  enabled: true
+  mode: "ON_FIRST_JOIN"
+  require-bukkit-whitelist-enabled: false
+
+logging:
+  audit-file: true
+  audit-console: true
+
+notes:
+  max-length: 64
+
+import:
+  placeholder-note: "imported from vanilla whitelist"
+  qq-length: 10

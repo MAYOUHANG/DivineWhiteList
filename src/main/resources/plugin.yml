@@ -1,0 +1,40 @@
+name: DivineWhiteList
+main: com.divine.whitelist.DivineWhiteListPlugin
+version: 1.0.0
+api-version: 1.20
+commands:
+  dwl:
+    description: DivineWhiteList main command
+    usage: /dwl <add|remove|setqq|info|qq|list|reload|export|import>
+permissions:
+  divinewhitelist.admin:
+    description: Full access
+    default: op
+    children:
+      divinewhitelist.add: true
+      divinewhitelist.remove: true
+      divinewhitelist.setqq: true
+      divinewhitelist.info: true
+      divinewhitelist.qq: true
+      divinewhitelist.list: true
+      divinewhitelist.reload: true
+      divinewhitelist.import: true
+      divinewhitelist.export: true
+  divinewhitelist.add:
+    default: op
+  divinewhitelist.remove:
+    default: op
+  divinewhitelist.setqq:
+    default: op
+  divinewhitelist.info:
+    default: op
+  divinewhitelist.qq:
+    default: op
+  divinewhitelist.list:
+    default: op
+  divinewhitelist.reload:
+    default: op
+  divinewhitelist.import:
+    default: op
+  divinewhitelist.export:
+    default: op
