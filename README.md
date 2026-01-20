@@ -62,7 +62,7 @@ DivineWhiteList 是一个面向 Mohist 1.20.1 混合端与 Spigot 体系的白�
 
 主命令：/dwl
 
-5.1 添加白名单  
+1)  添加白名单  
 /dwl add <玩家名> <QQ号> [备注...] [--force]
 
 示例  
@@ -76,13 +76,13 @@ DivineWhiteList 是一个面向 Mohist 1.20.1 混合端与 Spigot 体系的白�
 - 若 QQ 已绑定其他玩家名，默认拒绝添加  
 - 若玩家名已存在，默认提示已存在，支持 --force 覆盖
 
-5.2 移除白名单  
+2) 移除白名单  
 /dwl remove <玩家名>
 
-5.3 更新 QQ  
+3) 更新 QQ  
 /dwl setqq <玩家名> <新QQ号>
 
-5.4 查看条目  
+4) 查看条目  
 /dwl info <玩家名>
 
 输出建议  
@@ -92,21 +92,21 @@ DivineWhiteList 是一个面向 Mohist 1.20.1 混合端与 Spigot 体系的白�
 - 创建时间与操作者  
 - 最近修改时间与操作者
 
-5.5 按 QQ 查询  
+5) 按 QQ 查询  
 /dwl qq <QQ号>
 
 输出建议  
 - 该 QQ 绑定的所有玩家名  
 - 每个玩家名的备注与创建时间
 
-5.6 列表与分页  
+6) 列表与分页  
 /dwl list [页码]  
 建议每页 10 条
 
-5.7 重载  
+7) 重载  
 /dwl reload
 
-5.8 导入导出 可选  
+8) 导入导出 可选  
 /dwl export vanilla  
 /dwl import vanilla
 
