@@ -11,10 +11,10 @@ limits:
   max-names-per-qq: 1
 
 kick-message:
-  - "&c你不在白名单中。"
-  - "&7请按管理组要求提交申请。"
-  - "&7你的用户名: &f{player}"
-  - "&7服务器: &f{server}"
+  - "&6提示"
+  - "&7当前服务器已启用白名单。"
+  - "&7请联系管理员提交申请。"
+  - "&7玩家: &f{player}  &7服务器: &f{server}"
 
 placeholders:
   server: "PaPa服务器"
