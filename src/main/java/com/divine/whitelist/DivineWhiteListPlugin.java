@@ -70,10 +70,10 @@ public class DivineWhiteListPlugin extends JavaPlugin implements Listener {
 
     private void logStartupBanner() {
         getLogger().info("╔════════════════════════════════════════════╗");
-        getLogger().info("║     ✦ DivineWhiteList Core Ignition ✦      ║");
-        getLogger().info("║   ⚡ Energizing whitelist matrix...         ║");
-        getLogger().info("║   ✧ Author: MAAAABG                         ║");
-        getLogger().info("║   ☄️  Syncing realm access protocols...      ║");
+        getLogger().info("║            DivineWhiteList 启动             ║");
+        getLogger().info("║            白名单服务加载中                 ║");
+        getLogger().info("║            作者: MAAAABG                    ║");
+        getLogger().info("║            同步设置检查中                   ║");
         getLogger().info("╚════════════════════════════════════════════╝");
     }
 

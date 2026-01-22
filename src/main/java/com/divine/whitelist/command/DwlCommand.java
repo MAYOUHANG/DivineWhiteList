@@ -23,6 +23,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 
 public class DwlCommand implements CommandExecutor, TabCompleter {
+    private static final String PREFIX = "&7[白名单] ";
     private final DivineWhiteListPlugin plugin;
     private final WhitelistStore store;
 
@@ -74,11 +75,11 @@ public class DwlCommand implements CommandExecutor, TabCompleter {
 
     private void handleAdd(CommandSender sender, String[] args) {
         if (!sender.hasPermission("divinewhitelist.add")) {
-            sender.sendMessage(TextUtil.colorize("&c你没有权限执行该命令。"));
+            sender.sendMessage(TextUtil.colorize(PREFIX + "&c权限不足，无法执行该命令。"));
             return;
         }
         if (args.length < 2) {
-            sender.sendMessage(TextUtil.colorize("&c用法: /dwl add <玩家名> <QQ号> [备注...] [--force]"));
+            sender.sendMessage(TextUtil.colorize(PREFIX + "&c用法: /dwl add <玩家名> <QQ号> [备注...] [--force]"));
             return;
         }
         boolean force = false;
@@ -96,23 +97,23 @@ public class DwlCommand implements CommandExecutor, TabCompleter {
         }
         PluginConfig config = plugin.getPluginConfig();
         if (!isValidName(name)) {
-            sender.sendMessage(TextUtil.colorize("&c玩家名不合法，必须为 3-16 位字母数字或下划线。"));
+            sender.sendMessage(TextUtil.colorize(PREFIX + "&c玩家名不合法，必须为 3-16 位字母数字或下划线。"));
             return;
         }
         if (!isValidQq(qq, config.getQqPattern(), config.getQqMinLength(), config.getQqMaxLength())) {
-            sender.sendMessage(TextUtil.colorize("&cQQ 号格式不正确。"));
+            sender.sendMessage(TextUtil.colorize(PREFIX + "&cQQ 号格式不正确。"));
             return;
         }
         if (note.length() > config.getNoteMaxLength()) {
-            sender.sendMessage(TextUtil.colorize("&c备注长度不能超过 " + config.getNoteMaxLength() + " 字符。"));
+            sender.sendMessage(TextUtil.colorize(PREFIX + "&c备注长度不能超过 " + config.getNoteMaxLength() + " 字符。"));
             return;
         }
         if (store.isWhitelisted(name) && !force) {
-            sender.sendMessage(TextUtil.colorize("&e该玩家已存在白名单，如需覆盖请使用 --force。"));
+            sender.sendMessage(TextUtil.colorize(PREFIX + "&e该玩家已在白名单中，如需覆盖请使用 --force。"));
             return;
         }
         if (!canBindQq(qq, config.getMaxNamesPerQq(), name)) {
-            sender.sendMessage(TextUtil.colorize("&c该 QQ 已达到绑定名额上限。"));
+            sender.sendMessage(TextUtil.colorize(PREFIX + "&c该 QQ 已达到绑定名额上限。"));
             return;
         }
         if (store.isWhitelisted(name)) {
@@ -121,98 +122,98 @@ public class DwlCommand implements CommandExecutor, TabCompleter {
         store.addEntry(name, qq, note, sender.getName());
         persist(sender);
         audit("ADD", sender.getName(), name, qq, note);
-        sender.sendMessage(TextUtil.colorize("&a已添加白名单: " + name + " QQ=" + qq));
+        sender.sendMessage(TextUtil.colorize(PREFIX + "&a已添加白名单: " + name + " QQ=" + qq));
     }
 
     private void handleRemove(CommandSender sender, String[] args) {
         if (!sender.hasPermission("divinewhitelist.remove")) {
-            sender.sendMessage(TextUtil.colorize("&c你没有权限执行该命令。"));
+            sender.sendMessage(TextUtil.colorize(PREFIX + "&c权限不足，无法执行该命令。"));
             return;
         }
         if (args.length < 1) {
-            sender.sendMessage(TextUtil.colorize("&c用法: /dwl remove <玩家名>"));
+            sender.sendMessage(TextUtil.colorize(PREFIX + "&c用法: /dwl remove <玩家名>"));
             return;
         }
         String name = args[0];
         if (!store.removeEntry(name)) {
-            sender.sendMessage(TextUtil.colorize("&c未找到该玩家的白名单记录。"));
+            sender.sendMessage(TextUtil.colorize(PREFIX + "&c未找到该玩家的白名单记录。"));
             return;
         }
         persist(sender);
         audit("REMOVE", sender.getName(), name, "", "");
-        sender.sendMessage(TextUtil.colorize("&a已移除白名单: " + name));
+        sender.sendMessage(TextUtil.colorize(PREFIX + "&a已移除白名单: " + name));
     }
 
     private void handleSetQq(CommandSender sender, String[] args) {
         if (!sender.hasPermission("divinewhitelist.setqq")) {
-            sender.sendMessage(TextUtil.colorize("&c你没有权限执行该命令。"));
+            sender.sendMessage(TextUtil.colorize(PREFIX + "&c权限不足，无法执行该命令。"));
             return;
         }
         if (args.length < 2) {
-            sender.sendMessage(TextUtil.colorize("&c用法: /dwl setqq <玩家名> <新QQ号>"));
+            sender.sendMessage(TextUtil.colorize(PREFIX + "&c用法: /dwl setqq <玩家名> <新QQ号>"));
             return;
         }
         String name = args[0];
         String qq = args[1];
         PluginConfig config = plugin.getPluginConfig();
         if (!isValidQq(qq, config.getQqPattern(), config.getQqMinLength(), config.getQqMaxLength())) {
-            sender.sendMessage(TextUtil.colorize("&cQQ 号格式不正确。"));
+            sender.sendMessage(TextUtil.colorize(PREFIX + "&cQQ 号格式不正确。"));
             return;
         }
         if (!store.isWhitelisted(name)) {
-            sender.sendMessage(TextUtil.colorize("&c未找到该玩家的白名单记录。"));
+            sender.sendMessage(TextUtil.colorize(PREFIX + "&c未找到该玩家的白名单记录。"));
             return;
         }
         if (!canBindQq(qq, config.getMaxNamesPerQq(), name)) {
-            sender.sendMessage(TextUtil.colorize("&c该 QQ 已达到绑定名额上限。"));
+            sender.sendMessage(TextUtil.colorize(PREFIX + "&c该 QQ 已达到绑定名额上限。"));
             return;
         }
         store.updateQq(name, qq, sender.getName());
         persist(sender);
         audit("SETQQ", sender.getName(), name, qq, "");
-        sender.sendMessage(TextUtil.colorize("&a已更新 QQ: " + name + " -> " + qq));
+        sender.sendMessage(TextUtil.colorize(PREFIX + "&a已更新 QQ: " + name + " -> " + qq));
     }
 
     private void handleInfo(CommandSender sender, String[] args) {
         if (!sender.hasPermission("divinewhitelist.info")) {
-            sender.sendMessage(TextUtil.colorize("&c你没有权限执行该命令。"));
+            sender.sendMessage(TextUtil.colorize(PREFIX + "&c权限不足，无法执行该命令。"));
             return;
         }
         if (args.length < 1) {
-            sender.sendMessage(TextUtil.colorize("&c用法: /dwl info <玩家名>"));
+            sender.sendMessage(TextUtil.colorize(PREFIX + "&c用法: /dwl info <玩家名>"));
             return;
         }
         String name = args[0];
         store.getEntry(name).ifPresentOrElse(entry -> {
-            sender.sendMessage(TextUtil.colorize("&e玩家名: &f" + entry.getNameOriginal()));
-            sender.sendMessage(TextUtil.colorize("&eQQ号: &f" + entry.getQq()));
-            sender.sendMessage(TextUtil.colorize("&e备注: &f" + entry.getNote()));
-            sender.sendMessage(TextUtil.colorize("&e创建: &f" + entry.getCreatedAt() + " &7by " + entry.getCreatedBy()));
-            sender.sendMessage(TextUtil.colorize("&e更新: &f" + entry.getUpdatedAt() + " &7by " + entry.getUpdatedBy()));
-        }, () -> sender.sendMessage(TextUtil.colorize("&c未找到该玩家的白名单记录。")));
+            sender.sendMessage(TextUtil.colorize(PREFIX + "&e玩家名: &f" + entry.getNameOriginal()));
+            sender.sendMessage(TextUtil.colorize(PREFIX + "&eQQ号: &f" + entry.getQq()));
+            sender.sendMessage(TextUtil.colorize(PREFIX + "&e备注: &f" + entry.getNote()));
+            sender.sendMessage(TextUtil.colorize(PREFIX + "&e创建: &f" + entry.getCreatedAt() + " &7by " + entry.getCreatedBy()));
+            sender.sendMessage(TextUtil.colorize(PREFIX + "&e更新: &f" + entry.getUpdatedAt() + " &7by " + entry.getUpdatedBy()));
+        }, () -> sender.sendMessage(TextUtil.colorize(PREFIX + "&c未找到该玩家的白名单记录。")));
     }
 
     private void handleQq(CommandSender sender, String[] args) {
         if (!sender.hasPermission("divinewhitelist.qq")) {
-            sender.sendMessage(TextUtil.colorize("&c你没有权限执行该命令。"));
+            sender.sendMessage(TextUtil.colorize(PREFIX + "&c权限不足，无法执行该命令。"));
             return;
         }
         if (args.length < 1) {
-            sender.sendMessage(TextUtil.colorize("&c用法: /dwl qq <QQ号>"));
+            sender.sendMessage(TextUtil.colorize(PREFIX + "&c用法: /dwl qq <QQ号>"));
             return;
         }
         String qq = args[0];
         Set<String> names = store.listNamesByQq(qq);
         if (names.isEmpty()) {
-            sender.sendMessage(TextUtil.colorize("&e该 QQ 没有关联的白名单记录。"));
+            sender.sendMessage(TextUtil.colorize(PREFIX + "&e该 QQ 没有关联的白名单记录。"));
             return;
         }
-        sender.sendMessage(TextUtil.colorize("&aQQ " + qq + " 绑定玩家: " + String.join(", ", names)));
+        sender.sendMessage(TextUtil.colorize(PREFIX + "&aQQ " + qq + " 绑定玩家: " + String.join(", ", names)));
     }
 
     private void handleList(CommandSender sender, String[] args) {
         if (!sender.hasPermission("divinewhitelist.list")) {
-            sender.sendMessage(TextUtil.colorize("&c你没有权限执行该命令。"));
+            sender.sendMessage(TextUtil.colorize(PREFIX + "&c权限不足，无法执行该命令。"));
             return;
         }
         int page = 1;
@@ -220,7 +221,7 @@ public class DwlCommand implements CommandExecutor, TabCompleter {
             try {
                 page = Integer.parseInt(args[0]);
             } catch (NumberFormatException ignored) {
-                sender.sendMessage(TextUtil.colorize("&c页码必须为数字。"));
+                sender.sendMessage(TextUtil.colorize(PREFIX + "&c页码必须为数字。"));
                 return;
             }
         }
@@ -229,40 +230,40 @@ public class DwlCommand implements CommandExecutor, TabCompleter {
         entries.sort(Comparator.comparing(WhitelistEntry::getNameOriginal, String.CASE_INSENSITIVE_ORDER));
         int totalPages = Math.max(1, (int) Math.ceil(entries.size() / (double) pageSize));
         if (page < 1 || page > totalPages) {
-            sender.sendMessage(TextUtil.colorize("&c页码超出范围，最大页数: " + totalPages));
+            sender.sendMessage(TextUtil.colorize(PREFIX + "&c页码超出范围，最大页数: " + totalPages));
             return;
         }
-        sender.sendMessage(TextUtil.colorize("&e白名单列表 (" + page + "/" + totalPages + ")"));
+        sender.sendMessage(TextUtil.colorize(PREFIX + "&e白名单列表 (" + page + "/" + totalPages + ")"));
         int start = (page - 1) * pageSize;
         int end = Math.min(start + pageSize, entries.size());
         for (int i = start; i < end; i++) {
             WhitelistEntry entry = entries.get(i);
-            sender.sendMessage(TextUtil.colorize("&7- &f" + entry.getNameOriginal() + " &7QQ: &f" + entry.getQq()));
+            sender.sendMessage(TextUtil.colorize(PREFIX + "&7- &f" + entry.getNameOriginal() + " &7QQ: &f" + entry.getQq()));
         }
     }
 
     private void handleReload(CommandSender sender) {
         if (!sender.hasPermission("divinewhitelist.reload")) {
-            sender.sendMessage(TextUtil.colorize("&c你没有权限执行该命令。"));
+            sender.sendMessage(TextUtil.colorize(PREFIX + "&c权限不足，无法执行该命令。"));
             return;
         }
         plugin.reloadPluginConfig();
         try {
             store.load();
         } catch (IOException ex) {
-            sender.sendMessage(TextUtil.colorize("&c配置或数据文件加载失败: " + ex.getMessage()));
+            sender.sendMessage(TextUtil.colorize(PREFIX + "&c配置或数据文件加载失败: " + ex.getMessage()));
             return;
         }
-        sender.sendMessage(TextUtil.colorize("&a配置已重载。"));
+        sender.sendMessage(TextUtil.colorize(PREFIX + "&a配置已重载。"));
     }
 
     private void handleExport(CommandSender sender, String[] args) {
         if (!sender.hasPermission("divinewhitelist.export")) {
-            sender.sendMessage(TextUtil.colorize("&c你没有权限执行该命令。"));
+            sender.sendMessage(TextUtil.colorize(PREFIX + "&c权限不足，无法执行该命令。"));
             return;
         }
         if (args.length < 1 || !"vanilla".equalsIgnoreCase(args[0])) {
-            sender.sendMessage(TextUtil.colorize("&c用法: /dwl export vanilla"));
+            sender.sendMessage(TextUtil.colorize(PREFIX + "&c用法: /dwl export vanilla"));
             return;
         }
         int count = 0;
@@ -273,16 +274,16 @@ public class DwlCommand implements CommandExecutor, TabCompleter {
                 count++;
             }
         }
-        sender.sendMessage(TextUtil.colorize("&a已同步至原版白名单: " + count + " 条。"));
+        sender.sendMessage(TextUtil.colorize(PREFIX + "&a已同步至原版白名单: " + count + " 条。"));
     }
 
     private void handleImport(CommandSender sender, String[] args) {
         if (!sender.hasPermission("divinewhitelist.import")) {
-            sender.sendMessage(TextUtil.colorize("&c你没有权限执行该命令。"));
+            sender.sendMessage(TextUtil.colorize(PREFIX + "&c权限不足，无法执行该命令。"));
             return;
         }
         if (args.length < 1 || !"vanilla".equalsIgnoreCase(args[0])) {
-            sender.sendMessage(TextUtil.colorize("&c用法: /dwl import vanilla"));
+            sender.sendMessage(TextUtil.colorize(PREFIX + "&c用法: /dwl import vanilla"));
             return;
         }
         PluginConfig config = plugin.getPluginConfig();
@@ -300,19 +301,19 @@ public class DwlCommand implements CommandExecutor, TabCompleter {
             imported++;
         }
         persist(sender);
-        sender.sendMessage(TextUtil.colorize("&a已从原版白名单导入: " + imported + " 条。"));
+        sender.sendMessage(TextUtil.colorize(PREFIX + "&a已从原版白名单导入: " + imported + " 条。"));
     }
 
     private void sendUsage(CommandSender sender) {
-        sender.sendMessage(TextUtil.colorize("&e/dwl add <玩家名> <QQ号> [备注...] [--force]"));
-        sender.sendMessage(TextUtil.colorize("&e/dwl remove <玩家名>"));
-        sender.sendMessage(TextUtil.colorize("&e/dwl setqq <玩家名> <新QQ号>"));
-        sender.sendMessage(TextUtil.colorize("&e/dwl info <玩家名>"));
-        sender.sendMessage(TextUtil.colorize("&e/dwl qq <QQ号>"));
-        sender.sendMessage(TextUtil.colorize("&e/dwl list [页码]"));
-        sender.sendMessage(TextUtil.colorize("&e/dwl reload"));
-        sender.sendMessage(TextUtil.colorize("&e/dwl export vanilla"));
-        sender.sendMessage(TextUtil.colorize("&e/dwl import vanilla"));
+        sender.sendMessage(TextUtil.colorize(PREFIX + "&e/dwl add <玩家名> <QQ号> [备注...] [--force]"));
+        sender.sendMessage(TextUtil.colorize(PREFIX + "&e/dwl remove <玩家名>"));
+        sender.sendMessage(TextUtil.colorize(PREFIX + "&e/dwl setqq <玩家名> <新QQ号>"));
+        sender.sendMessage(TextUtil.colorize(PREFIX + "&e/dwl info <玩家名>"));
+        sender.sendMessage(TextUtil.colorize(PREFIX + "&e/dwl qq <QQ号>"));
+        sender.sendMessage(TextUtil.colorize(PREFIX + "&e/dwl list [页码]"));
+        sender.sendMessage(TextUtil.colorize(PREFIX + "&e/dwl reload"));
+        sender.sendMessage(TextUtil.colorize(PREFIX + "&e/dwl export vanilla"));
+        sender.sendMessage(TextUtil.colorize(PREFIX + "&e/dwl import vanilla"));
     }
 
     private boolean isValidName(String name) {
@@ -341,7 +342,7 @@ public class DwlCommand implements CommandExecutor, TabCompleter {
         try {
             store.save();
         } catch (IOException ex) {
-            sender.sendMessage(TextUtil.colorize("&c保存数据失败: " + ex.getMessage()));
+            sender.sendMessage(TextUtil.colorize(PREFIX + "&c保存数据失败: " + ex.getMessage()));
         }
     }
 
